@@ -6,6 +6,9 @@
   "scripts": {
     "test": "lab"
   },
+  "bin": {
+    "querious-migration": "bin/querious-migration.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mikl/querious-migration.git"
@@ -19,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/mikl/querious-migration/issues"
   },
-  "homepage": "https://github.com/mikl/querious-migration#readme"
+  "homepage": "https://github.com/mikl/querious-migration#readme",
+  "dependencies": {
+    "yargs": "^3.10.0"
+  }
 }
