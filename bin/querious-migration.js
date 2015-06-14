@@ -10,10 +10,6 @@ var argv = require('yargs')
   .demand(['c', 'm'])
   .argv;
 
-var config_loader = require('../config_loader');
+var cli = require('../src/cli');
 
-config_loader(argv.config, function (err, config) {
-  if (err) {
-    throw err;
-  }
-});
+cli(argv);
