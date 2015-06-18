@@ -5,6 +5,7 @@
 
 var async = require('async');
 var config_loader = require('./config_loader');
+var migration_finder = require('./migration_finder');
 
 /**
  * Main CLI application.
@@ -14,9 +15,15 @@ var config_loader = require('./config_loader');
  */
 module.exports = function (argv) {
   async.auto({
+
     config: function (callback) {
       config_loader(argv.config, callback);
-    }
+    },
+
+    migrations: ['config', function (callback, results) {
+      migration_finder(argv['migration-folder'], results.config, callback);
+    }],
+
   }, function (err, results) {
     if (err) {
       throw err;

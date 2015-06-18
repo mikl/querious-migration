@@ -25,6 +25,7 @@
   "homepage": "https://github.com/mikl/querious-migration#readme",
   "dependencies": {
     "async": "^1.2.1",
+    "glob": "^5.0.10",
     "toml": "^2.2.3",
     "yargs": "^3.10.0"
   }
