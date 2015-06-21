@@ -54,7 +54,7 @@ module.exports = function (argv) {
     }],
 
     migrations: ['config', function (callback, results) {
-      migration_finder(argv['migration-folder'], results.config, callback);
+      migration_finder(argv['migration-path'], results.config, callback);
     }],
 
     filter_self_migrations: ['self_querious', 'self_migrations', function (callback, results) {
