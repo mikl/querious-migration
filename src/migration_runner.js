@@ -12,7 +12,14 @@ let extensionStripper = function (fileName) {
 
 module.exports = function (options, callback) {
   async.eachSeries(options.migrations, function (fileName, callback) {
-    let queryPath = path.join(options.migrationPath, extensionStripper(fileName));
+    let queryPath;
+
+    if (options.migrationPath) {
+      queryPath = path.join(options.migrationPath, extensionStripper(fileName));
+    }
+    else {
+      queryPath = extensionStripper(fileName);
+    }
 
     options.querious.query(queryPath, [], function (err, result) {
       if (!err) {
