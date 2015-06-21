@@ -40,7 +40,7 @@ module.exports = function (argv) {
       });
     }],
 
-    querious: ['db_client', function (callback, results) {
+    self_querious: ['db_client', function (callback, results) {
       callback(null, new Querious({
         client: results.db_client,
         dialect: results.config.database.type,
@@ -56,11 +56,11 @@ module.exports = function (argv) {
       migration_finder(argv['migration-folder'], results.config, callback);
     }],
 
-    filter_self_migrations: ['querious', 'self_migrations', function (callback, results) {
+    filter_self_migrations: ['self_querious', 'self_migrations', function (callback, results) {
       migration_filter({
         migrations: results.self_migrations,
         module: 'querious-migrations', 
-        querious: results.querious,
+        querious: results.self_querious,
         selfMigration: true,
       }, callback);
     }],
