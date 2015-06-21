@@ -18,8 +18,8 @@ var pg = require('pg');
  *   Parsed command-line arguments.
  */
 module.exports = function (argv) {
+  let selfMigrationPath = 'migrations';
   let selfSQLPath = path.resolve(__dirname, '..', 'sql');
-  let selfMigrationPath = path.join(selfSQLPath, 'migrations');
 
   async.auto({
 
@@ -49,7 +49,7 @@ module.exports = function (argv) {
     }],
 
     self_migrations: ['config', function (callback, results) {
-      migration_finder(selfMigrationPath, results.config, callback);
+      migration_finder(path.join(selfSQLPath, selfMigrationPath), results.config, callback);
     }],
 
     migrations: ['config', function (callback, results) {
