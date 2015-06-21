@@ -53,10 +53,6 @@ module.exports = function (argv) {
       migration_finder(path.join(selfSQLPath, selfMigrationPath), results.config, callback);
     }],
 
-    migrations: ['config', function (callback, results) {
-      migration_finder(argv['migration-path'], results.config, callback);
-    }],
-
     filter_self_migrations: ['self_querious', 'self_migrations', function (callback, results) {
       migration_filter({
         migrations: results.self_migrations,
@@ -73,6 +69,37 @@ module.exports = function (argv) {
         migrations: results.filter_self_migrations.filter_migrations,
         module: 'querious-migrations',
         querious: results.self_querious,
+        selfQuerious: results.self_querious,
+      }, callback);
+    }],
+
+    querious: ['db_client', function (callback, results) {
+      callback(null, new Querious({
+        client: results.db_client,
+        dialect: results.config.database.type,
+        sql_folder: argv['migration-path'],
+      }));
+    }],
+
+    migrations: ['config', function (callback, results) {
+      migration_finder(argv['migration-path'], results.config, callback);
+    }],
+
+    filter_migrations: ['querious', 'run_self_migrations', function (callback, results) {
+      migration_filter({
+        migrations: results.migrations,
+        module: argv.module,
+        // This one needs self_querious to find the status check query.
+        querious: results.self_querious,
+      }, callback);
+    }],
+
+    run_migrations: ['filter_migrations', function (callback, results) {
+      migration_runner({
+        migrationVersion: results.filter_migrations.current_version,
+        migrations: results.filter_migrations.filter_migrations,
+        module: argv.module,
+        querious: results.querious,
         selfQuerious: results.self_querious,
       }, callback);
     }],
