@@ -8,6 +8,7 @@ var async = require('async');
 var config_loader = require('./config_loader');
 var migration_filter = require('./migration_filter');
 var migration_finder = require('./migration_finder');
+var migration_runner = require('./migration_runner');
 var path = require('path');
 var pg = require('pg');
 
@@ -59,9 +60,19 @@ module.exports = function (argv) {
     filter_self_migrations: ['self_querious', 'self_migrations', function (callback, results) {
       migration_filter({
         migrations: results.self_migrations,
-        module: 'querious-migrations', 
+        module: 'querious-migrations',
         querious: results.self_querious,
         selfMigration: true,
+      }, callback);
+    }],
+
+    run_self_migrations: ['filter_self_migrations', function (callback, results) {
+      migration_runner({
+        migrationPath: selfMigrationPath,
+        migrationVersion: results.filter_self_migrations.current_version,
+        migrations: results.filter_self_migrations.filter_migrations,
+        module: 'querious-migrations',
+        querious: results.self_querious,
       }, callback);
     }],
 

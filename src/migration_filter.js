@@ -40,6 +40,6 @@ module.exports = function (options, callback) {
     }],
 
   }, function (err, results) {
-    callback(err, results.filter_migrations);
+    callback(err, results);
   });
 };
