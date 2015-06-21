@@ -73,6 +73,7 @@ module.exports = function (argv) {
         migrations: results.filter_self_migrations.filter_migrations,
         module: 'querious-migrations',
         querious: results.self_querious,
+        selfQuerious: results.self_querious,
       }, callback);
     }],
 

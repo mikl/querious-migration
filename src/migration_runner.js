@@ -20,10 +20,10 @@ module.exports = function (options, callback) {
         console.info('Ran', fileName, 'for module', options.module, '- updated to version', newVersion, 'successfully.');
 
         if (options.migrationVersion === -1) {
-          options.querious.query('migration_status/insert', [options.module, newVersion], callback);
+          options.selfQuerious.query('migration_status/insert', [options.module, newVersion], callback);
         }
         else {
-          options.querious.query('migration_status/update', [options.module, newVersion], callback);
+          options.selfQuerious.query('migration_status/update', [options.module, newVersion], callback);
         }
       }
       else {
