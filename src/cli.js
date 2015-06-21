@@ -3,11 +3,13 @@
 // Imported and launched by the bin file.
 'use strict';
 
+var Querious = require('querious');
 var async = require('async');
 var config_loader = require('./config_loader');
-var migration_finder = require('./migration_finder');
 var migration_filter = require('./migration_filter');
+var migration_finder = require('./migration_finder');
 var path = require('path');
+var pg = require('pg');
 
 /**
  * Main CLI application.
@@ -25,6 +27,27 @@ module.exports = function (argv) {
       config_loader(argv.config, callback);
     },
 
+    db_client: ['config', function (callback, results) {
+      let dbClient = new pg.Client(results.config.database);
+
+      dbClient.connect(function (err) {
+
+        dbClient.on('error', function (err) {
+          console.error('Querious migration error', err);
+        });
+
+        return callback(err, dbClient);
+      });
+    }],
+
+    querious: ['db_client', function (callback, results) {
+      callback(null, new Querious({
+        client: results.db_client,
+        dialect: results.config.database.type,
+        sql_folder: selfSQLPath,
+      }));
+    }],
+
     self_migrations: ['config', function (callback, results) {
       migration_finder(selfMigrationPath, results.config, callback);
     }],
@@ -33,12 +56,11 @@ module.exports = function (argv) {
       migration_finder(argv['migration-folder'], results.config, callback);
     }],
 
-    filter_self_migrations: ['self_migrations', function (callback, results) {
+    filter_self_migrations: ['querious', 'self_migrations', function (callback, results) {
       migration_filter({
-        config: results.config, 
-        migrationFolder: selfSQLPath,
         migrations: results.self_migrations,
         module: 'querious-migrations', 
+        querious: results.querious,
         selfMigration: true,
       }, callback);
     }],
@@ -47,5 +69,7 @@ module.exports = function (argv) {
     if (err) {
       throw err;
     }
+
+    results.db_client.end();
   });
 }
