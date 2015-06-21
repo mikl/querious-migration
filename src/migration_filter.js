@@ -16,14 +16,22 @@ module.exports = function (options, callback) {
         if (err && options.selfMigration && err.message === 'relation "querious_migration_versions" does not exist') {
           return callback(null, -1);
         }
+        else if (err) {
+          callback(err);
+        }
         // If this module hasn't run migrations before, no version row
         // will be found. In this case, we also set version to -1 and
         // continue, so all migrations will be run.
         else if (results && results.rowCount === 0) {
           return callback(null, -1);
         }
-
-        return callback(null, results.rows[0].version);
+        else if (results.rows && results.rows[0]) {
+          return callback(null, results.rows[0].version);
+        }
+        else {
+          // This should never happen. Please file a bug if it does.
+          callback('Unknown error when resolving current_version');
+        }
       });
     },
 
