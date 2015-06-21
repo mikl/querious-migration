@@ -16,6 +16,12 @@ module.exports = function (options, callback) {
         if (err && options.selfMigration && err.message === 'relation "querious_migration_versions" does not exist') {
           return callback(null, -1);
         }
+        // If this module hasn't run migrations before, no version row
+        // will be found. In this case, we also set version to -1 and
+        // continue, so all migrations will be run.
+        else if (results && results.rowCount === 0) {
+          return callback(null, -1);
+        }
 
         // TODO: Handle database result.
 
