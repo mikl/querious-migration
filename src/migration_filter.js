@@ -26,7 +26,7 @@ module.exports = function (options, callback) {
   async.auto({
 
     current_version: function (callback) {
-      options.querious.query('migration_status/get_by_module', [options.module], function (err, result) {
+      options.querious.query('migration_status/get_by_module', [options.module], function (err, results) {
 
         // For the first round of self-migration, the versions table
         // will not exist. So we set the version to -1 and let the
@@ -47,11 +47,11 @@ module.exports = function (options, callback) {
 
         return versionNumber > results.current_version;
       });
-      
+
       callback(null, filteredMigrations);
     }],
 
   }, function (err, results) {
     callback(err, results.filter_migrations);
   });
-}
+};
