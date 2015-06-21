@@ -6,6 +6,7 @@
 var async = require('async');
 var config_loader = require('./config_loader');
 var migration_finder = require('./migration_finder');
+var migration_filter = require('./migration_filter');
 var path = require('path');
 
 /**
@@ -30,6 +31,16 @@ module.exports = function (argv) {
 
     migrations: ['config', function (callback, results) {
       migration_finder(argv['migration-folder'], results.config, callback);
+    }],
+
+    filter_self_migrations: ['self_migrations', function (callback, results) {
+      migration_filter({
+        config: results.config, 
+        migrationFolder: selfSQLPath,
+        migrations: results.self_migrations,
+        module: 'querious-migrations', 
+        selfMigration: true,
+      }, callback);
     }],
 
   }, function (err, results) {
