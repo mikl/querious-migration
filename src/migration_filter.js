@@ -23,9 +23,7 @@ module.exports = function (options, callback) {
           return callback(null, -1);
         }
 
-        // TODO: Handle database result.
-
-        callback(err);
+        return callback(null, results.rows[0].version);
       });
     },
 
