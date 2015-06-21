@@ -2,25 +2,7 @@
 'use strict';
 
 var async = require('async');
-
-var versionMatcher = /^0*(\d+)/;
-
-/**
- * Extract version number from file name.
- *
- * @param fileName Filename to extract version from.
- *
- * @return Number|Boolean Matched number, or boolean false if not found.
- */
-var versionExtractor = function (fileName) {
-  var matches = fileName.match(versionMatcher);
-
-  if (matches) {
-    return parseInt(matches[1], 10);
-  }
-
-  return false;
-};
+let version_extractor = require('./version_extractor');
 
 module.exports = function (options, callback) {
   async.auto({
@@ -43,7 +25,7 @@ module.exports = function (options, callback) {
 
     filter_migrations: ['current_version', function (callback, results) {
       let filteredMigrations = options.migrations.filter(function (fileName) {
-        let versionNumber = versionExtractor(fileName);
+        let versionNumber = version_extractor(fileName);
 
         return versionNumber > results.current_version;
       });
