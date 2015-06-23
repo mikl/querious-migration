@@ -11,6 +11,8 @@ let extensionStripper = function (fileName) {
 };
 
 module.exports = function (options, callback) {
+  let currentVersion = options.migrationVersion;
+
   async.eachSeries(options.migrations, function (fileName, callback) {
     let queryPath;
 
@@ -26,12 +28,16 @@ module.exports = function (options, callback) {
         let newVersion = version_extractor(fileName);
         console.info('Ran', fileName, 'for module', options.module, '- updated to version', newVersion, 'successfully.');
 
-        if (options.migrationVersion === -1) {
+        if (currentVersion === -1) {
           options.selfQuerious.query('migration_status/insert', [options.module, newVersion], callback);
         }
         else {
           options.selfQuerious.query('migration_status/update', [options.module, newVersion], callback);
         }
+
+        // Update our currentVersion variable, so it will have the
+        // expected value for any following migrations during this run.
+        currentVersion = newVersion;
       }
       else {
         callback(err);
