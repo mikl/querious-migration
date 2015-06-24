@@ -105,10 +105,15 @@ module.exports = function (argv) {
     }],
 
   }, function (err, results) {
+    results.db_client.end();
+
     if (err) {
       throw err;
     }
 
-    results.db_client.end();
+    let migrationCount = results.filter_migrations.filter_migrations.length;
+    let selfMigrationCount = results.filter_self_migrations.filter_migrations.length;
+
+    console.info('Querious migration successfully ran', migrationCount, 'migrations,', selfMigrationCount, 'self-migrations.');
   });
-}
+};
